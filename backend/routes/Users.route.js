@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { UserModel } = require("../models/Users.model");
 const userRouter = express.Router();
+require("dotenv").config();
 
 userRouter.post("/register", async (req, res) => {
      const { email, pass, name, age } = req.body;
@@ -19,7 +20,7 @@ userRouter.post("/register", async (req, res) => {
                          age,
                     });
                     await user.save();
-                    res.send("Registered");
+                    res.send({ msg: "Registered" });
                }
           });
      } catch (error) {
@@ -36,7 +37,10 @@ userRouter.post("/login", async (req, res) => {
           if (user.length > 0) {
                bcrypt.compare(pass, hased_pass, (err, result) => {
                     if (result) {
-                         const token = jwt.sign({ course: "backend" }, "masai");
+                         const token = jwt.sign(
+                              { userID: user[0]._id },
+                              process.env.key
+                         );
                          res.send({ msg: "Login Successfull", token: token });
                     } else {
                          res.send("Wrong Credntials");

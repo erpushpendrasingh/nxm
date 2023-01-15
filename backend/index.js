@@ -7,12 +7,14 @@ const { authenticate } = require("./middlewares/authenticate.middleware");
 require("dotenv").config();
 
 const app = express();
-app.use(express.json());
+const cors = require("cors");
 
+app.use(cors({ origin: "*" }));
+app.use(express.json());
 app.get("/", (req, res) => {
      res.send("Welcome to the mini project");
 });
-app.use("/users", userRouter);
+app.use("/user", userRouter);
 app.use(authenticate);
 app.use("/notes", noteRouter);
 
